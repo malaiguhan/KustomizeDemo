@@ -1,5 +1,6 @@
 package com.demo.kustomize;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.spark.broadcast.Broadcast;
 import org.apache.spark.sql.*;
 import org.apache.spark.sql.expressions.Window;
@@ -14,12 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.WebUtils;
 import scala.reflect.ClassTag;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -37,8 +36,14 @@ public class KustomizeDemoApplication {
 
 
 	@GetMapping("/hello/{name}")
-	public ResponseEntity<String> greet(@PathVariable String name){
-		return ResponseEntity.ok(String.format("%s %s! " ,System.getenv("GREETING"), name));
+	public ResponseEntity<String> greet(@PathVariable String name, HttpServletRequest request){
+		Enumeration<String> headerNames = request.getHeaderNames();
+		Map<String,String> headerMap = new HashMap<>();
+		while(headerNames.hasMoreElements()) {
+			String nextElement = headerNames.nextElement();
+			headerMap.put(nextElement,request.getHeader(nextElement));
+		}
+		return ResponseEntity.ok(String.format("%s %s!. Have a good day! please find the headers attached %s" ,System.getenv("GREETING"), name, headerMap));
 	}
 
 }
