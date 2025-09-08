@@ -38,7 +38,7 @@ public class KustomizeDemoApplication {
 
 	@GetMapping("/hello/{name}")
 	public ResponseEntity<String> greet(@PathVariable String name){
-		return ResponseEntity.ok(String.format("%s %s! " ,System.getenv("GREETING"), name));
+		return ResponseEntity.ok(String.format("%s %s!. Have a good day!" ,System.getenv("GREETING"), name));
 	}
 
 }
